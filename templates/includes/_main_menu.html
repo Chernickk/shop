@@ -1,0 +1,10 @@
+<div class="header clearfix">
+    <a href="/" class="logo"></a>
+    <ul class="menu">
+        <li><a href="/" {% if index %}class="active" {%endif%}>домой</a></li>
+        <li><a href="/products" {% if products %}class="active" {%endif%}>продукты</a></li>
+        <li><a href="/contact" {% if contact %}class="active" {%endif%}>контакты</a></li>
+    </ul>
+    <a href="#" class="search"></a>
+    <a href="#" class="basket"></a>
+</div>
