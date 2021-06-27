@@ -1,5 +1,4 @@
 env/
 .idea/
 *.pyc
-mainapp/__pycache__/
 db.sqlite3
