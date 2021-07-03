@@ -1,5 +1,6 @@
 from django.contrib import admin
 from . import models
+from authapp.models import ShopUser
 
 
 class ProductCategoryAdmin(admin.ModelAdmin):
@@ -12,5 +13,6 @@ class ProductAdmin(admin.ModelAdmin):
 
 admin.site.register(models.ProductCategory, ProductCategoryAdmin)
 admin.site.register(models.Product, ProductAdmin)
+admin.site.register(ShopUser)
 
 

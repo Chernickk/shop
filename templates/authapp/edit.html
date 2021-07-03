@@ -1,0 +1,29 @@
+{% extends 'authapp/base.html' %}
+{% load static %}
+
+{% block title %}{{ title|title }}{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static 'login.css' %}">
+<link rel="stylesheet" href="{% static 'fonts/font-awesome/css/font-awesome.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class='window'>
+    <div class='overlay'>
+        <div class='content'>
+            <div class='welcome'>Hello There!</div>
+
+            <div class='input-fields'>
+                <form action="{% url 'auth:edit_profile' %}" method="post">
+                    {% csrf_token %}
+                    {{ edit_profile_form.as_p }}
+                    <div><button class='ghost-round full-width' type="submit">Save</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
