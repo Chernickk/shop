@@ -34,7 +34,11 @@
 		{% for product in product_list%}
 		<div class="block">
 			<a href="#">
-				{% if product.image %} <img src="/media/{{ product.image }}" alt=""> {% endif %}
+				{% if product.image %}
+				<img src="/media/{{ product.image }}" alt="">
+				{% else %}
+				<img src="{% static 'img/not-available.jpg' %}" alt="">
+				{% endif %}
 				<div class="text">
 					<img src="{% static 'img/icon-hover.png' %}" alt="img">
 					<h4>{{ product.name }}</h4>
@@ -47,6 +51,5 @@
 	</div>
 </div>
 
-<div class="clr"></div>
 
 {% endblock %}

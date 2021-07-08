@@ -16,6 +16,7 @@
 <div class="details">
 	{% include 'includes/_links_menu.html' %}
 
+	{% if not pk %}
 	<div class="details-products">
 		<div class="details-slider">
 			<div class="slider-product">
@@ -57,6 +58,7 @@
 			</div>
 		</div>
 	</div>
+	{% endif %}
 
 	<div class="related">
 		<div class="title clearfix">
@@ -64,38 +66,25 @@
 			<a class="explore" href="#">показать все <img src="{% static 'img/arrow.png' %}" alt=""></a>
 		</div>
 		<div class="related-products clearfix">
+			{% for product in product_list %}
 			<div class="block">
-				<a href="#"><img src="{% static 'img/product-11.jpg' %}" alt="">
+				<a href="/basket/add_item/{{ product.pk }}/">
+					{% if product.image %}
+					<img src="/media/{{ product.image }}" class="product-image" alt="">
+					{% else %}
+					<img src="{% static 'img/not-available.jpg' %}" class="product-image" alt="">
+					{% endif %}
 					<div class="text">
 						<img src="{% static 'img/icon-hover.png' %}" alt="img">
-						<h4>Стул повышенного качества</h4>
-						<p>Не оторваться. </p>
+						<h4>{{ product.name }}</h4>
+						<p>{{ product.description }} </p>
 					</div>
 				</a>
 			</div>
-			<div class="block">
-				<a href="#"><img src="{% static 'img/product-21.jpg' %}" alt="">
-					<div class="text">
-						<img src="{% static 'img/icon-hover.png' %}" alt="img">
-						<h4>Стул повышенного качества</h4>
-						<p>Не оторваться. </p>
-					</div>
-				</a>
-			</div>
-			<div class="block">
-				<a href="#"><img src="{% static 'img/product-31.jpg' %}" alt="">
-					<div class="text">
-						<img src="{% static 'img/icon-hover.png' %}" alt="img">
-						<h4>Стул повышенного качества</h4>
-						<p>Не оторваться. </p>
-					</div>
-				</a>
-			</div>
+			{% endfor %}
 
 		</div>
 	</div>
 </div>
-
-<div class="clr"></div>
 
 {% endblock %}
