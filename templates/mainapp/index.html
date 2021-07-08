@@ -33,7 +33,8 @@
 	<div class="tab-content">
 		{% for product in product_list%}
 		<div class="block">
-			<a href="#"><img src="/media/{{ product.image }}" alt="">
+			<a href="#">
+				{% if product.image %} <img src="/media/{{ product.image }}" alt=""> {% endif %}
 				<div class="text">
 					<img src="{% static 'img/icon-hover.png' %}" alt="img">
 					<h4>{{ product.name }}</h4>
