@@ -12,10 +12,6 @@ html, body {
 	height: 100%;
 }
 
-.clr {
-	height: 384px;
-}
-
 .container {
 	width: 1366px;
 	margin: 0 auto;
@@ -547,7 +543,7 @@ html, body {
 	background-color: #f7f7f7;
 	padding-left: 99px;
 	padding-right: 98px;
-	margin: -384px auto 0;
+	margin: 0 auto 0;
 	clear: both;
 }
 .footer form {
@@ -1069,4 +1065,59 @@ td:first-child {
 }
 .related-products a:hover .text{
 	display: block;
+}
+.product-image {
+    min-width: 370px;
+    height: 370px;
+}
+
+.basket-image-td {
+    min-width: 150px;
+}
+
+.basket-name-td {
+    min-width: 300px;
+    text-align: center;
+}
+
+.basket-quantity-td {
+    min-width: 40px;
+    text-align: center;
+}
+
+.basket-price-td {
+    min-width: 100px;
+    text-align: center;
+}
+
+.basket-total-td {
+    min-width: 100px;
+    text-align: center;
+}
+
+.basket-add-td {
+    min-width: 40px;
+    text-align: center;
+}
+
+.basket-remove-td {
+    min-width: 80px;
+    text-align: center;
+}
+
+.basket-table {
+    width: 800px;
+    margin: 30px 0;
+}
+
+.basket-list {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    margin: 50px 0;
+}
+
+.basket-image {
+    width: 150px;
+    height: 150px;
 }

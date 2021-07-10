@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.utils import timezone
+from datetime import date
 
 
 class ShopUser(AbstractUser):
@@ -9,5 +9,9 @@ class ShopUser(AbstractUser):
 
     @property
     def age(self):
-        delta = timezone.now() - self.date_of_birth
-        return delta.years
+        if self.date_of_birth:
+            delta = date.today().year - self.date_of_birth.year
+            if date.today().month > self.date_of_birth.month or \
+                    (date.today().month == self.date_of_birth.month and date.today().day >= self.date_of_birth.day):
+                return delta
+            return delta - 1
