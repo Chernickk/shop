@@ -1,0 +1,36 @@
+{% if basket_list %}
+    <h2 class="basket-header">Корзина</h2>
+    <table class="basket-table">
+        <tr>
+            <td class="basket-image-td"></td>
+            <td class="basket-name-td">название</td>
+            <td class="basket-quantity-td">количество</td>
+            <td class="basket-price-td">цена</td>
+            <td class="basket-total-td">сумма</td>
+            <td class="basket-add-td"></td>
+            <td class="basket-remove-td"></td>
+        </tr>
+        {% for item in basket_list %}
+        <tr>
+            <td class="basket-image-td">
+                <a href="#">
+                    {% if item.product.image %}
+                    <img class="basket-image" src="/media/{{ item.product.image }}" alt="">
+                    {%endif %}
+                </a>
+            </td>
+            <td class="basket-name-td">{{ item.product.name }}</td>
+            <td class="basket-quantity-td"><input type="number" name="{{ item.pk }}" min="0" value="{{ item.quantity }}"></td>
+            <td class="basket-price-td">{{ item.product.price }}</td>
+            <td class="basket-total-td">{{ item.total }}</td>
+            <td class="basket-add-td"><a href="/basket/add_item/{{ item.product.id }}/">добавить</a></td>
+            <td class="basket-remove-td"><a href="/basket/remove_item/{{ item.product.id }}/">удалить</a></td>
+        </tr>
+        {% endfor %}
+
+
+    </table>
+    {% else %}
+    <h2 class="basket-header">Корзина пуста!</h2>
+    {% endif %}
+    <p>Всего товаров: {{total_count}}, на сумму {{total_sum}}</p>
