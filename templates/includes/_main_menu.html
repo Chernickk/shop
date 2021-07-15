@@ -5,6 +5,9 @@
         <li><a href="{% url 'products:index' %}" {% if products %}class="active" {%endif%}>продукты</a></li>
         <li><a href="{% url 'contact' %}" {% if contact %}class="active" {%endif%}>контакты</a></li>
         {% if user.is_authenticated %}
+        {% if user.is_staff %}
+        <li><a href="{% url 'adminapp:users' %}">админка</a></li>
+        {% endif %}
         <li><a href="{% url 'auth:edit_profile' %}">профиль</a></li>
         <li><a href="{% url 'auth:logout' %}">выйти</a></li>
         {% else %}
