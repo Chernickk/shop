@@ -20,7 +20,11 @@
 	<div class="details-products">
 		<div class="details-slider">
 			<div class="slider-product">
-				<img src="{% static 'img/slider1.jpg' %}">
+				{% if popular_item.image %}
+					<img src="/media/{{ popular_item.image }}" class="product-image" alt="">
+					{% else %}
+					<img src="{% static 'img/not-available.jpg' %}" class="product-image" alt="">
+					{% endif %}
 			</div>
 			<div class="slider-control">
 				<div class="block">
@@ -42,19 +46,14 @@
 		</div>
 
 		<div class="description">
-			<h3 class="big-bold">Отличный стул</h3>
+			<h3 class="big-bold">{{popular_item.name}}</h3>
 			<h3 class="red">горячее предложение</h3>
-			<p class="price"> 2585.9 <span>руб</span></p>
+			<p class="price"> {{popular_item.price}} <span>руб</span></p>
 			<a href="#" class="red-button">
 				заказать <i class="fa fa-chevron-right" aria-hidden="true"></i>
 			</a>
 			<div class="description-text">
-				<p>Расположитесь комфортно.</p>
-				<p>Отличное качество материалов
-					позволит вам это.</p>
-				<p>Различные цвета</p>
-				<p>высочайший уровень
-					эргономики и прочность.</p>
+				<p>{{ popular_item.description }}</p>
 			</div>
 		</div>
 	</div>
@@ -68,7 +67,7 @@
 		<div class="related-products clearfix">
 			{% for product in product_list %}
 			<div class="block">
-				<a href="/basket/add_item/{{ product.pk }}/">
+				<a href="/products/product/{{ product.pk }}/">
 					{% if product.image %}
 					<img src="/media/{{ product.image }}" class="product-image" alt="">
 					{% else %}

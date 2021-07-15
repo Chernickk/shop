@@ -1066,6 +1066,12 @@ td:first-child {
 .related-products a:hover .text{
 	display: block;
 }
+
+.product-page-image {
+    min-width: 450px;
+    height: 450px;
+}
+
 .product-image {
     min-width: 370px;
     height: 370px;

@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from random import choice
 from . import models
 
 
@@ -23,11 +24,26 @@ def products(request, pk=None):
     if pk is not None:
         product_list = models.Product.objects.filter(category_id=pk).order_by('-created_at')[:3]
     else:
-        product_list = models.Product.objects.all()[:3]
+        product_list = models.Product.objects.all().order_by('-created_at')[:3]
+
+    popular_item = choice(models.Product.objects.all())
+
     context = {
         'title': 'Продукты',
         'categories': categories,
         'product_list': product_list,
         'pk': pk,
+        'popular_item': popular_item
     }
     return render(request, 'mainapp/products.html', context=context)
+
+
+def product(request, pk):
+    product_ = models.Product.objects.get(pk=pk)
+
+    context = {
+        'title': f'{product_.name}',
+        'product': product_
+    }
+
+    return render(request, 'mainapp/product.html', context=context)

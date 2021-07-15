@@ -18,8 +18,7 @@
             <div class='input-fields'>
                 <form action="{% url 'auth:login' %}" method="post">
                     {% csrf_token %}
-                    {{ login_form.errors }}
-                    {{ login_form.non_field_errors }}
+                    <input type="hidden" name="next" value="{{ request.GET.next }}"/>
                     {{ login_form.as_p }}
                     <div><button class='ghost-round full-width' type="submit">Log in</button></div>
                 </form>
