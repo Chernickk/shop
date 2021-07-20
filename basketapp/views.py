@@ -1,29 +1,35 @@
-from django.shortcuts import render
 from django.shortcuts import redirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from django.template.loader import render_to_string
 from django.http import JsonResponse
+from django.views.generic.list import ListView
+from django.utils.decorators import method_decorator
+
 from mainapp.models import Product
 from .models import Basket
 
 
-@login_required
-def basket(request):
-    if request.user.is_authenticated:
-        user = request.user
-        basket_list = Basket.objects.filter(user=user)
-        total_sum = sum(item.total for item in basket_list)
-        total_count = sum(item.quantity for item in basket_list)
+class BasketListView(ListView):
+    template_name = 'basketapp/basket.html'
+    model = Basket
 
-    context = {
-        'title': 'Корзина',
-        'basket_list': basket_list,
-        'total_sum': total_sum,
-        'total_count': total_count,
-    }
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
-    return render(request, 'basketapp/basket.html', context=context)
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        basket_list = self.get_queryset()
+        context['title'] = 'Админка.пользователи.создание'
+        context['total_sum'] = sum(item.total for item in basket_list)
+        context['total_count'] = sum(item.quantity for item in basket_list)
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        return queryset.filter(user=self.request.user)
 
 
 @login_required

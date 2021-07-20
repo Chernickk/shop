@@ -1,0 +1,61 @@
+{% extends 'adminapp/base.html' %}
+{% load static %}
+{% load tags %}
+
+{% block content %}
+<main>
+    <div class="container-fluid">
+        <h1 class="mt-4">Продукты</h1>
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-table mr-1"></i>
+                {{ product.name }}
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="50%" cellspacing="0">
+                        <tr>
+                            <td>Категория</td>
+                            <td>{{ product.category.name }}</td>
+                        </tr>
+                        <tr>
+                            <td><img src="{{ product.image | media_folder_products }}" alt=""></td>
+                        </tr>
+                        <tr>
+                            <td>Описание</td>
+                            <td>{{ product.description }}</td>
+                        </tr>
+                        <tr>
+                            <td>Цена</td>
+                            <td>{{ product.price }}</td>
+                        </tr>
+                        <tr>
+                            <td>Количество</td>
+                            <td>{{ product.quantity }}</td>
+                        </tr>
+                        <tr>
+                            <td>Создан</td>
+                            <td>{{ product.created_at }}</td>
+                        </tr>
+                        <tr>
+                            <td>Обновлен</td>
+                            <td>{{ product.updated_at }}</td>
+                        </tr>
+                        <tr>
+                            <td>Удален</td>
+                            <td>{% if product.is_deleted %}Да{% else %}Нет{% endif %}</td>
+                        </tr>
+
+                        
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'shopadmin:product_update' pk=product.id %}">
+                    <button class="btn btn-success">Редактировать</button>
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
