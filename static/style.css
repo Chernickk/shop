@@ -1127,3 +1127,7 @@ td:first-child {
     width: 150px;
     height: 150px;
 }
+
+.not-active {
+    background-color: lightcoral;
+}

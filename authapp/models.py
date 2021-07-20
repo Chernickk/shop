@@ -6,6 +6,7 @@ from datetime import date
 class ShopUser(AbstractUser):
     image = models.ImageField()
     date_of_birth = models.DateField(null=True)
+    is_deleted = models.BooleanField(default=False)
 
     @property
     def age(self):
