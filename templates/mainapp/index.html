@@ -33,7 +33,7 @@
 	<div class="tab-content">
 		{% for product in product_list%}
 		<div class="block">
-			<a href="#">
+			<a href="{% url 'mainapp:product' pk=product.id %}">
 				{% if product.image %}
 				<img src="/media/{{ product.image }}" alt="">
 				{% else %}

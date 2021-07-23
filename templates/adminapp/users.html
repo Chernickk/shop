@@ -20,6 +20,7 @@
                             <th>Фамилия</th>
                             <th>Адрес эл. почты</th>
                             <th>Персонал сайта</th>
+                            <th>Суперпользователь</th>
                             <th>Вход</th>
                             <th>Активный</th>
                             <th>Активация</th>
@@ -34,6 +35,7 @@
                             <th>Фамилия</th>
                             <th>Адрес эл. почты</th>
                             <th>Персонал сайта</th>
+                            <th>Суперпользователь</th>
                             <th>Вход</th>
                             <th>Активный</th>
                             <th>Активация</th>
@@ -42,7 +44,7 @@
                         </tr>
                         </tfoot>
                         <tbody>
-                        {% for user in users_list %}
+                        {% for user in object_list %}
                             <tr {% if user.is_deleted %} style="opacity: 0.5;" {% endif %} {% if not user.is_active %} class="not-active" {% endif %}>
                                 <td><a href="{% url 'shopadmin:user_update' user.id %}" style="color: dodgerblue">{{ user.username }}</a></td>
                                 <td>{{ user.first_name }}</td>
@@ -50,6 +52,13 @@
                                 <td>{{ user.email }}</td>
                                 <td class="text-center">
                                     {% if user.is_staff %}
+                                        <i class="fa fa-check-circle"></i>
+                                    {% else %}
+                                        <i class="fa fa-times-circle"></i>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    {% if user.is_superuser %}
                                         <i class="fa fa-check-circle"></i>
                                     {% else %}
                                         <i class="fa fa-times-circle"></i>
@@ -80,6 +89,23 @@
                         {% endfor %}
                         </tbody>
                     </table>
+                    <div class="pagination">
+                        <span class="step-links">
+                            {% if page_obj.has_previous %}
+                                <a href="?page=1">&laquo; first</a>
+                                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                            {% endif %}
+                    
+                            <span class="current">
+                                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                            </span>
+                    
+                            {% if page_obj.has_next %}
+                                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                            {% endif %}
+                        </span>
+                    </div>
                 </div>
             </div>
             <div class="card-footer">
