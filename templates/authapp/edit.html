@@ -18,6 +18,7 @@
             <div class='input-fields'>
                 <form action="{% url 'auth:edit_profile' %}" method="post">
                     {% csrf_token %}
+                    {{ edit_form.as_p }}
                     {{ edit_profile_form.as_p }}
                     <div><button class='ghost-round full-width' type="submit">Save</button></div>
                 </form>

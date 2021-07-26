@@ -9,6 +9,7 @@ from django.core.mail import send_mail
 from .models import ShopUser
 from .forms import ShopUserLoginForm
 from .forms import ShopUserRegisterForm
+from .forms import ShopUserEditForm
 from .forms import ShopUserEditProfileForm
 
 logger = logging.getLogger(__name__)
@@ -63,15 +64,19 @@ def login(request):
 @login_required
 def edit(request):
     if request.method == 'POST':
-        edit_profile_form = ShopUserEditProfileForm(data=request.POST, files=request.FILES, instance=request.user)
-        if edit_profile_form.is_valid():
+        edit_form = ShopUserEditForm(data=request.POST, files=request.FILES, instance=request.user)
+        edit_profile_form = ShopUserEditProfileForm(data=request.POST, instance=request.user.shopuserprofile)
+        if edit_profile_form.is_valid() and edit_form.is_valid():
             edit_profile_form.save()
+            edit_form.save()
             return redirect('auth:edit')
-    edit_profile_form = ShopUserEditProfileForm(instance=request.user)
+    edit_form = ShopUserEditForm(instance=request.user)
+    edit_profile_form = ShopUserEditProfileForm(instance=request.user.shopuserprofile)
 
     context = {
         'title': 'Edit profile',
-        'edit_profile_form': edit_profile_form
+        'edit_form': edit_form,
+        'edit_profile_form': edit_profile_form,
     }
 
     return render(request, 'authapp/edit.html', context=context)
