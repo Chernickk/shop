@@ -7,6 +7,7 @@ from . import models
 class IndexView(ListView):
     template_name = 'mainapp/index.html'
     model = models.Product
+    ordering = 'created_at'
     paginate_by = 4
 
     def get_context_data(self, *, object_list=None, **kwargs):

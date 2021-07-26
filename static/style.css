@@ -1131,3 +1131,11 @@ td:first-child {
 .not-active {
     background-color: lightcoral;
 }
+
+.basket_price {
+    position: absolute;
+    top: 65px;
+    left: 1235px;
+    text-decoration: none;
+    color: black;
+}

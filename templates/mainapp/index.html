@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block content %}
-
+<div><p>{% if message %}{{ message }}{% endif %}</p></div>
 <div class="slider">
 	{% include 'includes/_main_menu.html' with index=True %}
 	<div class="text-slider">
