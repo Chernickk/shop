@@ -1,28 +1,17 @@
-import logging
 from django.shortcuts import render
-from django.urls import reverse
 from django.shortcuts import redirect
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
-from django.conf import settings
-from django.core.mail import send_mail
-from .models import ShopUser
 from .forms import ShopUserLoginForm
 from .forms import ShopUserRegisterForm
 from .forms import ShopUserEditProfileForm
-
-logger = logging.getLogger(__name__)
 
 
 def register(request):
     if request.method == 'POST':
         register_form = ShopUserRegisterForm(request.POST, request.FILES)
         if register_form.is_valid():
-            user = register_form.save()
-            if send_verify_mail(user):
-                logger.info(f'message sended to user {user.email}')
-            else:
-                logger.error(f'error sending message to user {user.email}')
+            register_form.save()
             return redirect('index')
 
     register_form = ShopUserRegisterForm()
@@ -80,36 +69,3 @@ def edit(request):
 def logout(request):
     auth.logout(request)
     return redirect('index')
-
-
-def verify(request, email, activation_key):
-    try:
-        status = False
-        user = ShopUser.objects.get(email=email)
-        if user.activation_key == activation_key and user.is_activation_key_valid():
-            user.is_active = True
-            user.save()
-            auth.login(request, user)
-            status = True
-        else:
-            logger.error(f'error activating user with email {email}')
-    except Exception as e:
-        logger.error(f'error activating user with {email} args: {e}')
-    finally:
-        context = {
-            'title': 'Активация аккаунта',
-            'status': status
-        }
-        
-        return render(request, 'authapp/verify.html', context=context)
-
-
-def send_verify_mail(user):
-    verify_link = reverse('auth:verify', kwargs={
-        'email': user.email,
-        'activation_key': user.activation_key
-    })
-    title = f'Активация аккаунта {user.username}'
-    message = f'Для активации вашего аккаунта перейдите по ссылке {settings.DOMAIN_NAME}{verify_link}'
-
-    return send_mail(title, message, settings.EMAIL_HOST_USER, [user.email], fail_silently=False)

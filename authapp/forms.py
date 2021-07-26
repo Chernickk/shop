@@ -1,10 +1,7 @@
-from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import UserChangeForm
 from django.forms import PasswordInput, ModelForm, CharField
-from uuid import uuid4
-from hashlib import sha1
 from .models import ShopUser
 
 
@@ -21,9 +18,6 @@ class ShopUserLoginForm(AuthenticationForm):
 
 
 class ShopUserRegisterForm(UserCreationForm):
-    date_of_birth = forms.DateField(required=False)
-    image = forms.ImageField(required=False)
-
     class Meta:
         model = ShopUser
         fields = ('username', 'first_name', 'password1', 'password2', 'email', 'date_of_birth', 'image')
@@ -34,19 +28,6 @@ class ShopUserRegisterForm(UserCreationForm):
             if field_name != 'is_staff':
                 field.widget.attrs['class'] = 'form-control'
                 field.help_text = ''
-
-    def save(self, commit=True):
-        user = super().save()
-
-        try:
-            user.is_active = False
-            salt = str(uuid4())[:8]
-            user.activation_key = sha1(f'{user.email}{salt}'.encode()).hexdigest()
-            user.save()
-        except Exception as e:
-            user.delete()
-
-        return user
 
 
 class ShopUserEditProfileForm(ModelForm):

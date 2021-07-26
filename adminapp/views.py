@@ -27,7 +27,7 @@ class UsersListView(ListView):
     template_name = 'adminapp/users.html'
     model = ShopUser
     ordering = ('-is_active', '-is_superuser', '-is_staff', 'username')
-    paginate_by = 15
+    paginate_by = 5
 
     @method_decorator(user_passes_test(lambda u: u.is_superuser))
     def dispatch(self, *args, **kwargs):
