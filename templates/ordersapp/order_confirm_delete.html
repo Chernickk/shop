@@ -1,0 +1,26 @@
+{% extends "mainapp/base.html" %}
+{% load static %}
+{% load tags %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+<link rel="stylesheet" href="{% static 'fonts/font-awesome/css/font-awesome.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="hero-white">
+	{% include 'includes/_main_menu.html' with products=True %}
+</div>
+
+<div class="category_delete">
+    <div class="h1">Уверены, что хотите удалить?</div>
+    {% include 'ordersapp/includes/inc_order_summary.html' %}
+    <form action="{% url 'ordersapp:order_delete' object.pk %}" method="post">
+        {% csrf_token %}
+        <input class="btn btn-danger" type="submit" value="удалить">
+    </form>
+    <button class="btn btn-success">
+        <a href="{% url 'ordersapp:orders_list' %}">отмена</a>
+    </button>
+</div>
+{% endblock %}

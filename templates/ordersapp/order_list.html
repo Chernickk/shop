@@ -1,0 +1,86 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+{% load tags %}
+
+{% block title %}{{ title|title }}{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+<link rel="stylesheet" href="{% static 'fonts/font-awesome/css/font-awesome.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="hero-white">
+	{% include 'includes/_main_menu.html' with products=True %}
+</div>
+
+
+{% if object_list %}
+
+<div class="h2 text-center head">
+    Ваши заказы, 
+    {% if user.first_name %}
+        {{ user.first_name|title}}
+    {% else %}
+        Пользователь
+    {% endif %}
+</div>
+
+<table class="table orders_list">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Создан</th>
+        <th>Обновлен</th>
+        <th>Статус</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for item in object_list %}
+            
+            <tr {% if item.is_active %}style=background-color: grey{% endif %}>
+                <td class="td1 orders_list">{{ item.pk }}</td>
+                <td>{{ item.created|date:"Y-m-d H:i:s" }}</td>
+                <td>{{ item.get_current_step.created_at|date:"Y-m-d H:i:s" }}</td>
+                <td>{{ item.get_current_step.get_status_display }}</td>
+                <td>
+                    <a href="{% url 'ordersapp:order_read' item.pk %}">
+                        посмотреть
+                    </a>
+                </td>
+                <td>
+                    {% if item.get_current_step.status == 'FM' %}
+                      <a href="{% url 'ordersapp:order_update' item.pk %}">
+                        редактировать
+                      </a>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if item.get_current_step.status == 'FM' %}
+                      <a href="{% url 'ordersapp:order_delete' item.pk %}">
+                          удалить
+                      </a>
+                    {% endif %}
+                </td>
+            </tr>
+            
+        {% endfor %}
+    </tbody>
+</table>
+
+{% else %}
+
+<div class="h2 text-center head">
+    У вас пока нет заказов!
+</div>
+
+
+
+{% endif %}
+
+<button class="btn btn-default btn-round">
+    <a href="{% url 'ordersapp:order_create' %}">
+        новый
+    </a>
+</button>
+{% endblock %}

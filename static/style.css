@@ -886,6 +886,7 @@ td:first-child {
 }
 
 .details-products {
+    display: flex;
 	padding-left: 98px;
 	padding-right: 98px;
 	margin-top: 98px;
