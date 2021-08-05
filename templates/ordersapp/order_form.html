@@ -9,11 +9,19 @@
 <link rel="stylesheet" href="{% static 'fonts/font-awesome/css/font-awesome.css' %}">
 {% endblock %}
 
+{% block js %}
+<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'js/order_scripts.js' %}"></script>
+<script src="{% static 'js/jquery.formset.js' %}"></script>
+{% endblock %}
+
 {% block content %}
 <div class="hero-white">
 	{% include 'includes/_main_menu.html' with products=True %}
 </div>
 
+
+{% include 'ordersapp/includes/inc_order_summary.html' %}
 
 <div class="order_form">
     <form action="" method="post">
@@ -42,7 +50,15 @@
                         {% endfor %}
                     {% endif %}
                     {{ field.errors.as_ul }}
-                    {{ field }}
+                    {% if field.name != 'price' %}
+                        {{ field }}
+                    {% else %}
+                        {% if field.value %}
+                        <span class="orderitems-{{forloop.parentloop.counter0}}-price">
+                            {{ field.value }}
+                          </span> руб
+                        {% endif %}
+                    {% endif %}
                 </td>
             {% endfor %}
         </tr>

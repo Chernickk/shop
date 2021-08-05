@@ -25,6 +25,8 @@ class OrderStepForm(forms.ModelForm):
 
 
 class OrderItemForm(forms.ModelForm):
+    price = forms.CharField(label='цена', required=False)
+
     class Meta:
         model = OrderItem
         fields = '__all__'

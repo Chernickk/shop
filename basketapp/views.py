@@ -59,8 +59,7 @@ def remove_item(request, pk):
             user=request.user,
             product=product
         )
-        basket.quantity -= 1
-        basket.save()
+        basket.delete()
 
     except ObjectDoesNotExist as e:
         pass

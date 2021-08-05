@@ -3,6 +3,7 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from mainapp.models import Product
+from .managers import OrderItemQuerySet
 
 
 class Order(models.Model):
@@ -33,6 +34,13 @@ class Order(models.Model):
     def __repr__(self):
         return f'Заказ №{self.id}, пользователя {self.user.username}'
 
+    def delete(self, *args, **kwargs):
+        items = self.get_order_items()
+        for item in items:
+            item.product.quantity += item.quantity
+            item.product.save()
+        super(Order, self).delete(*args, **kwargs)
+
 
 class OrderStep(models.Model):
     FORMING = 'FM'
@@ -62,9 +70,21 @@ class OrderStep(models.Model):
 
 
 class OrderItem(models.Model):
+    objects = OrderItemQuerySet.as_manager()
+
     order = models.ForeignKey(Order, related_name="orderitems", on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=0)
 
     def get_total_cost(self):
         return self.product.price * self.quantity
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            self.product.quantity -= self.__class__.get(pk=self.pk).quantity - self.quantity
+        else:
+            self.product.quantity -= self.quantity
+        self.product.save()
+        super(OrderItem, self).save(*args, **kwargs)
+
+
