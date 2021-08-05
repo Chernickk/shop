@@ -1,11 +1,10 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.forms import UserChangeForm
 from django.forms import PasswordInput, ModelForm, CharField
 from uuid import uuid4
 from hashlib import sha1
-from .models import ShopUser
+from .models import ShopUser, ShopUserProfile
 
 
 class ShopUserLoginForm(AuthenticationForm):
@@ -49,7 +48,7 @@ class ShopUserRegisterForm(UserCreationForm):
         return user
 
 
-class ShopUserEditProfileForm(ModelForm):
+class ShopUserEditForm(ModelForm):
     password = CharField(widget=PasswordInput, required=False)
 
     class Meta:
@@ -63,5 +62,16 @@ class ShopUserEditProfileForm(ModelForm):
                 field.widget.attrs['class'] = 'form-control'
             field.help_text = ''
 
+
+class ShopUserEditProfileForm(ModelForm):
+    class Meta:
+        model = ShopUserProfile
+        fields = ('tagline', 'about', 'gender',)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            # if field_name not in ['is_staff', 'is_superuser', 'is_deleted']:
+            field.widget.attrs['class'] = 'form-control'
 
 

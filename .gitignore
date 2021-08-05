@@ -5,3 +5,4 @@ db.sqlite3
 media/product_images
 mainapp/jsons/
 verify_mail_logs.log
+shop/.env

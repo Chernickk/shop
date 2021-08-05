@@ -1,7 +1,7 @@
 from django import forms
 from authapp.models import ShopUser
 from authapp.forms import ShopUserRegisterForm
-from authapp.forms import ShopUserEditProfileForm
+from authapp.forms import ShopUserEditForm
 from mainapp.models import ProductCategory
 from mainapp.models import Product
 
@@ -24,7 +24,7 @@ class ShopUserAdminRegisterForm(ShopUserRegisterForm):
                   'is_staff')
 
 
-class ShopUserAdminEditProfileForm(ShopUserEditProfileForm):
+class ShopUserAdminEditProfileForm(ShopUserEditForm):
     date_of_birth = forms.DateField(required=False)
     image = forms.ImageField(required=False)
     is_staff = forms.BooleanField(required=False)
