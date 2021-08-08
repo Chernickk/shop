@@ -1,9 +1,11 @@
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView, DetailView
 from django.forms import inlineformset_factory
 from django.urls import reverse_lazy
+from django.http import JsonResponse
 from django.db import transaction
 
 from basketapp.models import Basket
+from mainapp.models import Product
 from ordersapp.forms import OrderItemForm
 from ordersapp.models import Order, OrderItem
 
@@ -131,4 +133,13 @@ class OrderItemsUpdate(UpdateView):
 class OrderDelete(DeleteView):
     model = Order
     success_url = reverse_lazy('ordersapp:orders_list')
+
+
+def get_order_price(request, pk):
+    if request.is_ajax():
+        product = Product.objects.get(pk=pk)
+        if product:
+            return JsonResponse({'price': product.price})
+        else:
+            return JsonResponse({'price': 0})
 
