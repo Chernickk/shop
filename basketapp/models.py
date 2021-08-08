@@ -1,9 +1,11 @@
 from django.db import models
 from django.conf import settings
 from mainapp.models import Product
+from .managers import BasketQuerySet
 
 
 class Basket(models.Model):
+    objects = BasketQuerySet.as_manager()
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE,
                              related_name='basket')
@@ -20,4 +22,15 @@ class Basket(models.Model):
         if not self.quantity:
             self.delete()
         else:
-            super(Basket, self).save(*args, **kwargs)
+            if self.pk:
+                self.product.quantity -= self.quantity - self.__class__.objects.get(pk=self.pk).quantity
+            else:
+                self.product.quantity -= self.quantity
+            self.product.save()
+
+            super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        self.product.quantity += self.quantity
+        self.product.save()
+        super(Basket, self).delete(*args, **kwargs)

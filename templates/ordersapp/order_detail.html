@@ -1,0 +1,39 @@
+{% extends "mainapp/base.html" %}
+{% load static %}
+{% load tags %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+<link rel="stylesheet" href="{% static 'fonts/font-awesome/css/font-awesome.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="hero-white">
+	{% include 'includes/_main_menu.html' with products=True %}
+</div>
+
+   {% include 'ordersapp/includes/inc_order_summary.html' %}
+   <div class="basket_list">
+       {% for item in items %}
+           <div class="basket_record">
+               <img src="{{ item.product.image|media_folder_products }}"
+                    alt="{{ item.product.short_desc }}">
+               <span class="category_name">
+                   {{ item.product.category.name }}
+               </span>
+               <span class="product_name">{{ item.product.name }}</span>
+               <span class="product_price">
+                   {{ item.product.price }}&nbspруб
+               </span>
+               <span class="product_quantitiy">
+                   x {{ item.quantity }} шт.
+               </span>
+               <span class="product_cost">
+                    = {{ item.get_total_cost }}&nbspруб
+               </span>
+           </div>
+       {% endfor %}
+   </div>
+   {% include 'ordersapp/includes/inc_order_actions.html' %}
+
+{% endblock %}

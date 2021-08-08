@@ -8,7 +8,21 @@
         {% if user.is_staff %}
         <li><a href="{% url 'adminapp:users' %}">админка</a></li>
         {% endif %}
-        <li><a href="{% url 'auth:edit_profile' %}">профиль</a></li>
+
+        <li>
+        <div class="dropdown">
+            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                профиль
+            </a>
+          
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <li><a class="dropdown-item" href="{% url 'auth:edit_profile' %}">редактировать</a></li>
+              <li><a class="dropdown-item" href="{% url 'ordersapp:orders_list' %}">заказы</a></li>
+              <li><a class="dropdown-item" href="#">Something else here</a></li>
+            </ul>
+          </div>
+        </li>
+
         <li><a href="{% url 'auth:logout' %}">выйти</a></li>
         {% else %}
         <li><a href="{% url 'auth:login' %}">войти</a></li>

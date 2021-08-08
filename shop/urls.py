@@ -14,6 +14,7 @@ urlpatterns = [
     path('shopadmin/', include('adminapp.urls', namespace='shopadmin')),
     path('contact/', views.contact, name='contact'),
     path('social/', include('social_django.urls', namespace='social')),
+    path('order/', include('ordersapp.urls', namespace='order')),
 ]
 
 if settings.DEBUG:
