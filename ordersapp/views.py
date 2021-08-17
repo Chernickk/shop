@@ -83,7 +83,7 @@ class OrderRead(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(OrderRead, self).get_context_data()
-        context['items'] = self.object.get_order_items()
+        context['items'] = self.object.get_order_items
         context['title'] = 'Заказ'
 
         return context

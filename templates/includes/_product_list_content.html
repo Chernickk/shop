@@ -1,0 +1,40 @@
+{% load static %}
+
+<div class="products_list">
+    {{ category }}
+	<div class="related-products clearfix">
+    {% for product in products %}
+			<div class="block">
+				<a href="/products/product/{{ product.pk }}/">
+					{% if product.image %}
+					<img src="/media/{{ product.image }}" class="product-image" alt="">
+					{% else %}
+					<img src="{% static 'img/not-available.jpg' %}" class="product-image" alt="">
+					{% endif %}
+					<div class="text">
+						<img src="{% static 'img/icon-hover.png' %}" alt="img">
+						<h4>{{ product.name }}</h4>
+						<p>{{ product.description }} </p>
+					</div>
+				</a>
+			</div>
+	{% endfor %}
+	<div class="pagination">
+		<span class="step-links">
+			{% if products.has_previous %}
+				<a href="{{category_pk}}/page=1">&laquo; first</a>
+				<a href="{{category_pk}}/page={{ products.previous_page_number }}">previous</a>
+			{% endif %}
+	
+			<span class="current">
+				Page {{ products.number }} of {{ products.paginator.num_pages }}.
+			</span>
+	
+			{% if products.has_next %}
+				<a href="{{category_pk}}/page={{ products.next_page_number }}">next</a>
+				<a href="{{category_pk}}/page={{ products.paginator.num_pages }}">last &raquo;</a>
+			{% endif %}
+		</span>
+	</div>
+	</div>
+</div>
