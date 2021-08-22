@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.functional import cached_property
 from mainapp.models import Product
 from .managers import OrderItemQuerySet
 
@@ -11,31 +12,34 @@ class Order(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
 
+    @cached_property
     def get_order_steps(self):
         steps = self.order_steps.select_related()
         return steps
 
+    @cached_property
     def get_order_items(self):
         items = self.orderitems.select_related()
         return items
 
+    @cached_property
     def get_current_step(self):
-        step = self.order_steps.select_related().order_by('-created_at').first()
+        step = self.get_order_steps.order_by('-created_at').first()
         return step
 
     def get_total_quantity(self):
-        items = self.orderitems.select_related()
+        items = self.get_order_items
         return sum(item.quantity for item in items)
 
     def get_total_cost(self):
-        items = self.orderitems.select_related()
+        items = self.get_order_items
         return sum(item.get_total_cost() for item in items)
 
     def __repr__(self):
         return f'Заказ №{self.id}, пользователя {self.user.username}'
 
     def delete(self, *args, **kwargs):
-        items = self.get_order_items()
+        items = self.get_order_items
         for item in items:
             item.product.quantity += item.quantity
             item.product.save()

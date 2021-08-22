@@ -1,8 +1,108 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from django.template.loader import render_to_string
+from django.http import JsonResponse
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.views.generic.list import ListView
+from django.conf import settings
+from django.core.cache import cache
 from random import choice
 from . import models
 
+
+# Cache functions
+
+def get_links_menu():
+    if settings.LOW_CACHE:
+        key = 'links_menu'
+        links_menu = cache.get(key)
+        if links_menu is None:
+            links_menu = models.ProductCategory.objects.filter(is_deleted=False)
+            cache.set(key, links_menu)
+    else:
+        links_menu = models.ProductCategory.objects.filter(is_deleted=False)
+
+    return links_menu
+
+
+def get_category(pk):
+    if settings.LOW_CACHE:
+        key = f'category_{pk}'
+        category = cache.get(key)
+        if category is None:
+            category = models.ProductCategory.objects.get(pk=pk)
+            cache.set(key, category)
+    else:
+        category = models.ProductCategory.objects.get(pk=pk)
+
+    return category
+
+
+def get_products():
+    if settings.LOW_CACHE:
+        key = 'products'
+        products = cache.get(key)
+        if products is None:
+            products = models.Product.get_items()
+            cache.set(key, products)
+    else:
+        products = models.Product.get_items()
+
+    return products
+
+
+def get_product(pk):
+    if settings.LOW_CACHE:
+        key = f'product_{pk}'
+        product = cache.get(key)
+        if product is None:
+            product = get_object_or_404(models.Product, pk=pk, is_deleted=False)
+            cache.set(key, product)
+    else:
+        product = get_object_or_404(models.Product, pk=pk, is_deleted=False)
+
+    return product
+
+
+def get_popular_product():
+    if settings.LOW_CACHE:
+        key = f'popular_product'
+        product = cache.get(key)
+        if product is None:
+            product = choice(get_products())
+            cache.set(key, product)
+    else:
+        product = choice(get_products())
+
+    return product
+
+
+def get_products_ordered_by_price():
+    if settings.LOW_CACHE:
+        key = 'products_ordered_by_price'
+        products = cache.get(key)
+        if products is None:
+            products = models.Product.objects.filter(is_deleted=False).order_by('price')
+            cache.set(key, products)
+    else:
+        products = models.Product.objects.filter(is_deleted=False).order_by('price')
+
+    return products
+
+
+def get_products_from_category_ordered_by_price(pk):
+    if settings.LOW_CACHE:
+        key = f'products_from_category_{pk}_ordered_by_price'
+        products = cache.get(key)
+        if products is None:
+            products = models.Product.objects.filter(is_deleted=False, category__pk=pk).order_by('price')
+            cache.set(key, products)
+    else:
+        products = models.Product.objects.filter(is_deleted=False, category__pk=pk).order_by('price')
+
+    return products
+
+
+# Views
 
 class IndexView(ListView):
     template_name = 'mainapp/index.html'
@@ -14,6 +114,9 @@ class IndexView(ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Магазин'
         return context
+
+    def get_queryset(self):
+        return get_products()
 
 
 def contact(request):
@@ -31,10 +134,10 @@ class ProductsView(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        categories = models.ProductCategory.objects.filter(is_deleted=False)
+        categories = get_links_menu()
         context['categories'] = categories
 
-        popular_item = choice(models.Product.objects.all())
+        popular_item = get_popular_product()
         context['popular_item'] = popular_item
 
         context['title'] = 'Магазин'
@@ -43,7 +146,7 @@ class ProductsView(ListView):
         return context
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = get_products()
         if self.kwargs.get('pk'):
             category = models.ProductCategory.objects.get(pk=self.kwargs.get('pk'))
             return queryset.filter(category=category)
@@ -51,27 +154,8 @@ class ProductsView(ListView):
         return queryset
 
 
-def products(request, pk=None):
-    categories = models.ProductCategory.objects.all()
-    if pk is not None:
-        product_list = models.Product.objects.filter(category_id=pk).order_by('-created_at')[:3]
-    else:
-        product_list = models.Product.objects.all().order_by('-created_at')[:3]
-
-    popular_item = choice(models.Product.objects.all())
-
-    context = {
-        'title': 'Продукты',
-        'categories': categories,
-        'product_list': product_list,
-        'pk': pk,
-        'popular_item': popular_item
-    }
-    return render(request, 'mainapp/products.html', context=context)
-
-
 def product(request, pk):
-    product_ = models.Product.objects.get(pk=pk)
+    product_ = get_product(pk)
 
     context = {
         'title': f'{product_.name}',
@@ -79,3 +163,39 @@ def product(request, pk):
     }
 
     return render(request, 'mainapp/product.html', context=context)
+
+
+def products_ajax(request, category_pk=None, page=1):
+    if request.is_ajax():
+        links_menu = get_links_menu()
+        if category_pk is not None:
+            if category_pk == '0':
+                products = get_products_ordered_by_price()
+                category_name = 'все'
+            else:
+                category_name = get_category(category_pk).name
+                products = get_products_from_category_ordered_by_price(pk=category_pk)
+
+            paginator = Paginator(products, 2)
+            try:
+                products_paginator = paginator.page(page)
+            except PageNotAnInteger:
+                products_paginator = paginator.page(1)
+            except EmptyPage:
+                products_paginator = paginator.page(paginator.num_pages)
+
+            context = {
+                'links_menu': links_menu,
+                'category': category_name,
+                'category_pk': category_pk,
+                'products': products_paginator,
+            }
+
+            result = render_to_string(
+                'includes/_product_list_content.html',
+                context=context,
+                request=request
+            )
+
+            return JsonResponse({'result': result})
+
