@@ -8,8 +8,10 @@ $( document ).on( 'click', '.details a', function(event) {
                     $('.details-products').html(data.result);
                 },
             });
- 
-            event.preventDefault();
+            console.log(link.split('/'));
+            if (link.split('/')[4] != 'ajax') {
+                event.preventDefault();
+            }
         
     }
  });

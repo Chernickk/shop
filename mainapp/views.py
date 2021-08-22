@@ -65,7 +65,7 @@ def get_product(pk):
 
 def get_popular_product():
     if settings.LOW_CACHE:
-        key = f'popular_product'
+        key = 'popular_product'
         product = cache.get(key)
         if product is None:
             product = choice(get_products())

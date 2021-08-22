@@ -1,10 +1,13 @@
-from django.shortcuts import render
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import user_passes_test
 from django.utils.decorators import method_decorator
 from django.views.generic.list import ListView
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
+from django.dispatch import receiver
+from django.db.models.signals import pre_save
+from django.db.models import F
+from django.db import connection
 from authapp.models import ShopUser
 from mainapp.models import Product
 from mainapp.models import ProductCategory
@@ -115,6 +118,15 @@ class CategoryEditView(UpdateView):
         context['title'] = 'Админка.категории.редактирование'
         return context
 
+    def form_valid(self, form):
+        if 'discount' in form.cleaned_data:
+            discount = form.cleaned_data['discount']
+            if discount:
+                self.object.product_set.update(price=F('price') * (1 - discount / 100))
+                db_profile_by_type(self.__class__, 'UPDATE', connection.queries)
+
+        return super().form_valid(form)
+
 
 @user_passes_test(lambda u: u.is_superuser)
 def category_delete(request, pk):
@@ -187,3 +199,19 @@ def product_delete(request, pk):
 
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
+
+def db_profile_by_type(prefix, type, queries):
+    update_queries = [query['sql'] for query in queries if type in query['sql']]
+    print(f'db_profile {type} for {prefix}:')
+    [print(query) for query in update_queries]
+
+
+@receiver(pre_save, sender=ProductCategory)
+def product_is_active_update_productcategory_save(sender, instance, **kwargs):
+    if instance.pk:
+        if instance.is_deleted:
+            instance.product_set.update(is_deleted=True)
+        else:
+            instance.product_set.update(is_deleted=False)
+
+        db_profile_by_type(sender, 'UPDATE', connection.queries)

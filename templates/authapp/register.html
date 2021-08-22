@@ -18,9 +18,7 @@
             <div class='input-fields'>
                 <form action="{% url 'auth:register' %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-                    {% for error in register_form.errors %}
-                    {{ error }}
-                    {% endfor %}
+                    
                     {{ register_form.as_p }}
                     <div><button class='ghost-round full-width' type="submit">Register</button></div>
                 </form>

@@ -56,10 +56,11 @@ class CategoryCreateForm(forms.ModelForm):
 class CategoryEditForm(forms.ModelForm):
     is_deleted = forms.BooleanField(required=False)
     description = forms.CharField(widget=forms.Textarea, required=False)
+    discount = forms.IntegerField(label='скидка', required=False, min_value=0, max_value=90, initial=0)
 
     class Meta:
         model = ProductCategory
-        fields = ('name', 'description', 'is_deleted')
+        fields = ('name', 'description', 'is_deleted', 'discount')
 
 
 class ProductCreateForm(forms.ModelForm):
