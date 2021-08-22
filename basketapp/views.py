@@ -5,6 +5,7 @@ from django.template.loader import render_to_string
 from django.http import JsonResponse
 from django.views.generic.list import ListView
 from django.utils.decorators import method_decorator
+from django.db.models import F
 
 from mainapp.models import Product
 from .models import Basket
@@ -45,8 +46,7 @@ def add_item(request, pk):
 
     if not created:
         if product.quantity > basket.quantity:
-            basket.quantity += 1
-            basket.save()
+            basket.quantity = F('quantity') + 1
 
     return redirect(request.META.get('HTTP_REFERER'))
 

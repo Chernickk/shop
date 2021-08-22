@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.shortcuts import redirect
 from django.contrib import auth
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.core.mail import send_mail
@@ -25,11 +26,11 @@ def register(request):
             else:
                 logger.error(f'error sending message to user {user.email}')
             return redirect('index')
-
-    register_form = ShopUserRegisterForm()
+    else:
+        register_form = ShopUserRegisterForm()
     context = {
         'register_form': register_form,
-        'title': 'Register page'
+        'title': 'Register page',
     }
 
     return render(request, 'authapp/register.html', context=context)
@@ -46,13 +47,13 @@ def login(request):
 
             if user and user.is_active:
                 auth.login(request, user)
-                next_ = request.POST['next']
+                next_ = request.POST.get('next')
                 if next_:
                     return redirect(next_)
 
                 return redirect('index')
-
-    login_form = ShopUserLoginForm()
+    else:
+        login_form = ShopUserLoginForm()
     context = {
         'login_form': login_form,
         'title': 'Login page'
@@ -70,8 +71,9 @@ def edit(request):
             edit_profile_form.save()
             edit_form.save()
             return redirect('auth:edit')
-    edit_form = ShopUserEditForm(instance=request.user)
-    edit_profile_form = ShopUserEditProfileForm(instance=request.user.shopuserprofile)
+    else:
+        edit_form = ShopUserEditForm(instance=request.user)
+        edit_profile_form = ShopUserEditProfileForm(instance=request.user.shopuserprofile)
 
     context = {
         'title': 'Edit profile',

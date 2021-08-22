@@ -7,4 +7,3 @@ class OrderItemQuerySet(models.QuerySet):
             item.product.quantity += item.quantity
             item.product.save()
         super(OrderItemQuerySet, self).delete(*args, **kwargs)
-
